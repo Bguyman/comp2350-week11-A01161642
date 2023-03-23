@@ -1,10 +1,13 @@
 const router = require('express').Router();
-//const database = include('databaseConnection');
+const database = include('databaseConnection');
 //const dbModel = include('databaseAccessLayer');
 //const dbModel = include('staticData');
-
-const userModel = include('models/web_user');
-const petModel = include('models/pet');
+const Joi = require("joi");
+const schema = Joi.string().max(10).required();
+const validationResult = schema.validate(req.query.id);
+if (validationResult.error != null) {    console.log(validationResult.error);    throw validationResult.error; } 
+// const userModel = include('models/web_user');
+// const petModel = include('models/pet');
 
 const crypto = require('crypto');
 const {v4: uuid} = require('uuid');
@@ -14,7 +17,9 @@ const passwordPepper = "SeCretPeppa4MySal+";
 router.get('/', async (req, res) => {
 	console.log("page hit");
 	try {
-		const users = await userModel.findAll({attributes: ['web_user_id','first_name','last_name','email']}); //{where: {web_user_id: 1}}
+		const userCollection = database.db('lab_example').collection('users');
+		const users = await userCollection.find().project({first_name: 1, last_name: 1, email: 1, _id: 1}).toArray();
+		//const users = await userModel.findAll({attributes: ['web_user_id','first_name','last_name','email']}); //{where: {web_user_id: 1}}
 		if (users === null) {
 			res.render('error', {message: 'Error connecting to MySQL'});
 			console.log("Error connecting to userModel");
@@ -88,9 +93,7 @@ router.get('/deleteUser', async (req, res) => {
 			let deleteUser = await userModel.findByPk(userId);
 			console.log("deleteUser: ");
 			console.log(deleteUser);
-			if (deleteUser !== null) {
-				await deleteUser.destroy();
-			}
+			
 		}
 		res.redirect("/");
 	}
@@ -123,7 +126,7 @@ router.post('/addUser', async (req, res) => {
 				password_hash: password_hash.digest('hex')
 			}
 		);
-		await newUser.save();
+		
 		res.redirect("/");
 	}
 	catch(ex) {
