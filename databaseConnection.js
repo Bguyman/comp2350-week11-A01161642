@@ -6,12 +6,15 @@ const qoddiURI = "mongodb+srv://theMongoAdmin:accidentalLogin@cluster0.4ulcc.mon
 
 const localURI = "mongodb://localhost/?authSource=admin&retryWrites=true&w=majority"
 
+
 if (is_qoddi) {
-	let datadase = new MongoClient (qoddiURI, {
+	var database = new MongoClient (qoddiURI, {
 		useNewUrlParser: true, useUnifiedTopology: true
 	});
 } else {
-	let database = new MongoClient (localURI, {
-		useNewUrlParsel: true, useUnifiedTopology: true
+	var database = new MongoClient (localURI, {
+		useNewUrlParser: true, useUnifiedTopology: true
 	});
 }
+
+module.exports = database

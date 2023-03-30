@@ -4,8 +4,8 @@ const database = include('databaseConnection');
 //const dbModel = include('staticData');
 const Joi = require("joi");
 const schema = Joi.string().max(10).required();
-const validationResult = schema.validate(req.query.id);
-if (validationResult.error != null) {    console.log(validationResult.error);    throw validationResult.error; } 
+// const validationResult = schema.validate(req.query.id);
+// if (validationResult.error != null) {    console.log(validationResult.error);    throw validationResult.error; } 
 // const userModel = include('models/web_user');
 // const petModel = include('models/pet');
 
@@ -115,8 +115,8 @@ router.post('/addUser', async (req, res) => {
 		const password_hash = crypto.createHash('sha512');
 
 		password_hash.update(req.body.password+passwordPepper+password_salt);
-
-
+		const validationResult = schema.validate(req.query.id);
+		if (validationResult.error != null) {    console.log(validationResult.error);    throw validationResult.error; } 
 		let newUser = userModel.build(
 			{	
 				first_name: req.body.first_name,
